@@ -156,3 +156,4 @@
 /Users/mvstaden/Desktop/Projects/NewProjects/ExpenseApp/ExpenseTracker.Api/obj/Debug/net10.0/ExpenseTracker.Api.pdb
 /Users/mvstaden/Desktop/Projects/NewProjects/ExpenseApp/ExpenseTracker.Api/obj/Debug/net10.0/ExpenseTracker.Api.genruntimeconfig.cache
 /Users/mvstaden/Desktop/Projects/NewProjects/ExpenseApp/ExpenseTracker.Api/obj/Debug/net10.0/ref/ExpenseTracker.Api.dll
+/Users/mvstaden/Desktop/Projects/NewProjects/ExpenseApp/ExpenseTracker.Api/obj/Debug/net10.0/ExpenseTracker.Api.sourcelink.json
