@@ -21,6 +21,7 @@ namespace ExpenseTracker.Api.Data
 
         public DbSet<MonthlyPlan> MonthlyPlans { get; set; }
         public DbSet<RecurringExpense> RecurringExpenses { get; set; }
+        public DbSet<IncomeSource> IncomeSources { get; set; }
 
 
 
