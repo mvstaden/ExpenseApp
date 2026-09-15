@@ -42,6 +42,17 @@ namespace ExpenseTracker.Api.Controllers
                 monthlyPlan.IncomeSources.Add(newIncomeSource);
             }
 
+            foreach (var recurringExpense in dto.RecurringExpenses)
+            {
+                var newRecurringExpense = new RecurringExpense
+                {
+                    Name = recurringExpense.Name,
+                    Amount = recurringExpense.Amount,
+                    DayOfMonth = recurringExpense.DayOfMonth
+                };
+                monthlyPlan.RecurringExpenses.Add(newRecurringExpense);
+            }
+
             _context.MonthlyPlans.Add(monthlyPlan);
 
             await _context.SaveChangesAsync();
@@ -51,7 +62,8 @@ namespace ExpenseTracker.Api.Controllers
                 Id = monthlyPlan.Id,
                 Payday = monthlyPlan.Payday,
                 SavingsGoal = monthlyPlan.SavingsGoal,
-                IncomeSources = new List<IncomeSourceResponseDto>()
+                IncomeSources = new List<IncomeSourceResponseDto>(),
+
 
             };
 
@@ -65,6 +77,18 @@ namespace ExpenseTracker.Api.Controllers
                 };
 
                 response.IncomeSources.Add(incomeSourceResponse);
+            }
+
+            foreach (var recurringExpense in monthlyPlan.RecurringExpenses)
+            {
+                var recurringExpenseResponse = new RecurringExpenseResponseDto
+                {
+                    Id = recurringExpense.Id,
+                    Name = recurringExpense.Name,
+                    Amount = recurringExpense.Amount,
+                    DayOfMonth = recurringExpense.DayOfMonth
+                };
+                response.RecurringExpenses.Add(recurringExpenseResponse);
             }
 
             return StatusCode(201, response);
@@ -84,6 +108,13 @@ namespace ExpenseTracker.Api.Controllers
                     Id = i.Id,
                     Amount = i.Amount,
                     Name = i.Name
+                }).ToList(),
+                RecurringExpenses = p.RecurringExpenses.Select(r => new RecurringExpenseResponseDto
+                {
+                    Id = r.Id,
+                    Name = r.Name,
+                    Amount = r.Amount,
+                    DayOfMonth = r.DayOfMonth
                 }).ToList()
             }).ToListAsync();
 

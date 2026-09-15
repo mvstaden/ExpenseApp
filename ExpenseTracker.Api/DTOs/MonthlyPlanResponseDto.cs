@@ -6,5 +6,6 @@ namespace ExpenseTracker.Api.DTOs
         public DateTime Payday { get; set; }
         public decimal SavingsGoal { get; set; }
         public List<IncomeSourceResponseDto> IncomeSources { get; set; } = new List<IncomeSourceResponseDto>();
+        public List<RecurringExpenseResponseDto> RecurringExpenses { get; set; } = new List<RecurringExpenseResponseDto>();
     }
 }
