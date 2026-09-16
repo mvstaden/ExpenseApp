@@ -117,10 +117,6 @@ namespace ExpenseTracker.Api.Controllers
                     DayOfMonth = r.DayOfMonth
                 }).ToList()
             }).ToListAsync();
-
-
-
-
             return Ok(monthlyPlans);
         }
     }
