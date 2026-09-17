@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ExpenseTracker.Api.Data;
 using ExpenseTracker.Api.DTOs;
 using ExpenseTracker.Api.Models;
+using ExpenseTracker.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,10 +16,12 @@ namespace ExpenseTracker.Api.Controllers
     public class MonthlyPlansController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IBudgetCalculationService _budgetCalculationService;
 
-        public MonthlyPlansController(AppDbContext context)
+        public MonthlyPlansController(AppDbContext context, IBudgetCalculationService budgetCalculationService)
         {
             _context = context;
+            _budgetCalculationService = budgetCalculationService;
 
         }
 
@@ -98,26 +101,56 @@ namespace ExpenseTracker.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMonthlyPlans()
         {
-            var monthlyPlans = await _context.MonthlyPlans.Select(p => new MonthlyPlanResponseDto
+            var monthlyPlans = await _context.MonthlyPlans.Include(p => p.IncomeSources).Include(p => p.RecurringExpenses).ToListAsync();
+
+            var responses = new List<MonthlyPlanCalculationResponseDto>();
+
+            foreach (var plan in monthlyPlans)
             {
-                Id = p.Id,
-                Payday = p.Payday,
-                SavingsGoal = p.SavingsGoal,
-                IncomeSources = p.IncomeSources.Select(i => new IncomeSourceResponseDto
+                var totalIncome = _budgetCalculationService.CalculateTotalIncome(plan);
+
+                var totalRecurringExpenses = _budgetCalculationService.CalculateTotalRecurringExpenses(plan);
+
+                var availableSpending = _budgetCalculationService.CalculateAvailableSpending(plan);
+
+
+                var response = new MonthlyPlanCalculationResponseDto
                 {
-                    Id = i.Id,
-                    Amount = i.Amount,
-                    Name = i.Name
-                }).ToList(),
-                RecurringExpenses = p.RecurringExpenses.Select(r => new RecurringExpenseResponseDto
+                    Id = plan.Id,
+                    Payday = plan.Payday,
+                    SavingsGoal = plan.SavingsGoal,
+                    TotalIncome = totalIncome,
+                    TotalRecurringExpenses = totalRecurringExpenses,
+                    AvailableSpending = availableSpending
+                };
+
+                foreach (var incomeSource in plan.IncomeSources)
                 {
-                    Id = r.Id,
-                    Name = r.Name,
-                    Amount = r.Amount,
-                    DayOfMonth = r.DayOfMonth
-                }).ToList()
-            }).ToListAsync();
-            return Ok(monthlyPlans);
+                    response.IncomeSources.Add(new IncomeSourceResponseDto
+                    {
+                        Id = incomeSource.Id,
+                        Name = incomeSource.Name,
+                        Amount = incomeSource.Amount
+                    });
+                }
+
+                foreach (var recurringExpense in plan.RecurringExpenses)
+                {
+                    response.RecurringExpenses.Add(new RecurringExpenseResponseDto
+                    {
+                        Id = recurringExpense.Id,
+                        Name = recurringExpense.Name,
+                        Amount = recurringExpense.Amount,
+                        DayOfMonth = recurringExpense.DayOfMonth
+                    });
+                }
+
+                responses.Add(response);
+
+            }
+            return Ok(responses);
+
+
         }
     }
 }
