@@ -46,5 +46,11 @@ namespace ExpenseTracker.Api.Services
             return dailyAllowance;
         }
 
+
+        public DateTime CalculateNextPayday(DateTime payday)
+        {
+            return payday.AddMonths(1);
+        }
+
     }
 }

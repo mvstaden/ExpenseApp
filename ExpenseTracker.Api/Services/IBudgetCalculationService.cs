@@ -9,5 +9,7 @@ namespace ExpenseTracker.Api.Services
         decimal CalculateAvailableSpending(MonthlyPlan plan);
         int CalculateDaysInPayCycle(DateTime payday, DateTime nextPayday);
         decimal CalculateDailyAllowance(MonthlyPlan plan, DateTime nextPayday);
+
+        DateTime CalculateNextPayday(DateTime payday);
     }
 }

@@ -112,6 +112,8 @@ namespace ExpenseTracker.Api.Controllers
                 var totalRecurringExpenses = _budgetCalculationService.CalculateTotalRecurringExpenses(plan);
 
                 var availableSpending = _budgetCalculationService.CalculateAvailableSpending(plan);
+                var nextPayday = _budgetCalculationService.CalculateNextPayday(plan.Payday);
+                var dailyAllowance = _budgetCalculationService.CalculateDailyAllowance(plan, nextPayday);
 
 
                 var response = new MonthlyPlanCalculationResponseDto
@@ -121,7 +123,9 @@ namespace ExpenseTracker.Api.Controllers
                     SavingsGoal = plan.SavingsGoal,
                     TotalIncome = totalIncome,
                     TotalRecurringExpenses = totalRecurringExpenses,
-                    AvailableSpending = availableSpending
+                    AvailableSpending = availableSpending,
+                    DailyAllowance = dailyAllowance
+
                 };
 
                 foreach (var incomeSource in plan.IncomeSources)

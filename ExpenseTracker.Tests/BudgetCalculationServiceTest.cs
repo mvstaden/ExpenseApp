@@ -182,6 +182,18 @@ Amount = 3000
 
             Assert.Equal(33740, result);
         }
+
+
+        [Fact]
+        public void CalculateNextPayday_ShouldReturnPaydayInNextMonth()
+        {
+            var payday = new DateTime(2026, 9, 25);
+            var service = new BudgetCalculationService();
+
+            var result = service.CalculateNextPayday(payday);
+
+            Assert.Equal(new DateTime(2026, 10, 25), result);
+        }
     }
 
 }
